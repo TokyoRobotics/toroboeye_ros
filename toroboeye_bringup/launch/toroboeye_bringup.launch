@@ -1,0 +1,19 @@
+<launch>
+    <arg name="ns" default="toroboeye"/>
+    <arg name="camera" default="true"/>
+    <arg name="rviz" default="true"/>
+    <arg name="gui" default="true"/>
+
+    <include if="$(arg camera)" file="$(find toroboeye_camera)/launch/toroboeye_camera.launch">
+        <arg name="ns" value="$(arg ns)"/>
+    </include>
+ 
+     <include if="$(arg rviz)" file="$(find toroboeye_description)/launch/view_sl40_model.launch">
+        <arg name="ns" value="$(arg ns)"/>
+    </include>
+ 
+    <include if="$(arg gui)" file="$(find toroboeye_gui)/launch/toroboeye_operator.launch">
+        <arg name="ns" value="$(arg ns)"/>
+    </include>
+
+</launch>

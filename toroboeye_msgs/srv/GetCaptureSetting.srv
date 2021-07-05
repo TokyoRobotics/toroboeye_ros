@@ -1,0 +1,13 @@
+---
+bool success          # True if the call succeeded.
+string message        # Used to give details when success response is false.
+uint32 device_illuminant_power  #range: from 1 to 8
+uint32 depth_illuminant_color   #example: toroboeye.Setting.DEPTH.ILLUMINANT_COLOR.RED
+uint32 depth_coding_pattern     #example: toroboeye.Setting.DEPTH.CODING_PATTERN.GRAYCODE_BASE
+uint32 depth_accuracy           #range: from 0 to 9
+uint32 depth_exposure_time      #range: from 0 to 9
+uint32 color_strobe_intensity   #range: from 1 to 8
+uint32 color_exposure_time      #range: from 0 to 9
+toroboeye_msgs/Device device_configuration  #string 型kataga fumei!!!
+uint32 state_activation
+uint32 state_processing

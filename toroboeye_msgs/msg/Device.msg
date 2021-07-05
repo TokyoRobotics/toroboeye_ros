@@ -1,0 +1,5 @@
+string camera_product_name
+string camera_serial_number
+string controller_serial_number
+string controller_firmware_version
+string api_version

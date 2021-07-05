@@ -1,0 +1,5 @@
+string ip
+bool sync_time
+---
+bool success          # True if the call succeeded.
+string message        # Used to give details when success response is false.

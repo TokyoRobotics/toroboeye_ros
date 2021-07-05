@@ -1,0 +1,7 @@
+<launch>
+      <arg name="ns" default="toroboeye"/>
+      <group ns="$(arg ns)">
+            <param name="prefix" type="str" value="$(arg ns)"/>
+            <node pkg="rqt_gui" name="rqt_gui" type="rqt_gui" args="--standalone toroboeye_operator" output="screen" />
+      </group>
+</launch>

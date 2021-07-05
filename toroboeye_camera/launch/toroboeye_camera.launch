@@ -1,0 +1,29 @@
+<launch>
+      <arg name="ns" default="toroboeye"/>
+      <arg name="pub" default="true"/>
+      <arg name="publish_rate" default="1"/>
+
+      <group ns="$(arg ns)">
+      
+            <!-- load parameter file -->
+            <rosparam command="load" file="$(find toroboeye_camera)/params/param_filter.yaml"/>
+            <rosparam command="load" file="$(find toroboeye_camera)/params/param_capture_setting.yaml"/>
+            <param name="prefix" type="str" value="$(arg ns)"/>
+
+            <!-- The toroboeye_camera node -->
+            <node pkg="toroboeye_camera" type="toroboeye_camera_service_node.py" name="toroboeye_camera_service_node" output="screen"/>
+
+            <node if="$(arg pub)" pkg="toroboeye_camera" type="toroboeye_camera_publisher_node.py" name="toroboeye_camera_publisher_node">
+                  <param name="publish_rate" value="$(arg publish_rate)"/>
+            </node>
+            
+            <node pkg="nodelet" type="nodelet" name="cloudify" output="screen"
+                  args="standalone depth_image_proc/point_cloud_xyzrgb" >
+			<remap from="rgb/camera_info" to="camera_info"/>
+                  <remap from="rgb/image_rect_color" to="color/image"/>
+                  <remap from="depth_registered/image_rect" to="depth/image"/>
+                  <remap from="depth_registered/points" to="points"/>
+            </node>
+
+      </group>
+</launch>

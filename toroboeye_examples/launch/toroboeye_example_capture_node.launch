@@ -1,0 +1,14 @@
+<launch>
+    <arg name="ns" default="toroboeye"/>
+    <group ns="$(arg ns)">
+        <!-- load parameter file -->
+        <rosparam command="load" file="$(find toroboeye_camera)/params/param_filter.yaml"/>
+        <rosparam command="load" file="$(find toroboeye_camera)/params/param_capture_setting.yaml"/>
+        <rosparam command="load" file="$(find toroboeye_examples)/params/param_capture_example.yaml"/>
+        <param name="prefix" type="str" value="$(arg ns)" />
+
+        <!-- The toroboeye_sample node -->
+        <node pkg="toroboeye_examples" type="toroboeye_capture_example.py" name="toroboeye_capture_example" output="screen" />
+    </group>
+</launch>
+

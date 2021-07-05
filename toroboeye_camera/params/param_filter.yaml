@@ -1,0 +1,23 @@
+#### Depth Filter value ####
+adjustment_depth_scale : 1000
+upper_base_limit       : 1
+lower_amplitude_limit  : 255
+gradient_threshold     : 10
+edge_dilation_value    : 2
+min_area_x             : 0
+min_area_y             : 0
+max_area_x             : 1440
+max_area_y             : 1080
+depth_range_min        : 200
+depth_range_max        : 700
+
+#### Color Filter Value ####
+colorbalance_gain_red   : 1.5
+colorbalance_gain_green : 1.0
+colorbalance_gain_blue  : 2.0
+input_level_dark   : 0
+input_level_light  : 255
+output_level_dark  : 0
+output_level_light : 255
+brightness_gamma   : 1.0
+sharpness_level    : 0.0

@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<robot name="toroboeye_sl40" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:arg name="prefix" default="sl40_1"/>
+  <xacro:property name="M_PI" value="3.1415926535897931"/>
+  <link name="$(arg prefix)/base_link"/>
+  <joint name="$(arg prefix)/body_joint" type="fixed">
+    <parent link="$(arg prefix)/base_link"/>
+    <child  link="$(arg prefix)/camera_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+  <link name="$(arg prefix)/camera_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://toroboeye_description/meshes/sl40.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 ${90*M_PI/180}"/>
+      <material name="gray">
+        <color rgba="0.8 0.8 0.8 1.0"/>
+      </material>
+    </visual>
+    <visual>
+      <geometry>
+        <cylinder radius="0.012" length="0.003"/>
+      </geometry>
+      <origin xyz="0 0 0.016" rpy="0 ${90*M_PI/180} 0"/>
+      <material name="black">
+        <color rgba="0.6 0.6 0.6 1.0"/>
+      </material>
+    </visual>
+    <visual>
+      <geometry>
+        <cylinder radius="0.01" length="0.003"/>
+      </geometry>
+      <origin xyz="0 0 0.056" rpy="0 ${90*M_PI/180} 0"/>
+      <material name="black">
+        <color rgba="0.6 0.6 0.6 1.0"/>
+      </material>
+    </visual>
+  </link>
+  <joint name="$(arg prefix)/camera_frame_joint" type="fixed">
+    <parent link="$(arg prefix)/camera_link"/>
+    <child  link="$(arg prefix)/camera_frame"/>
+    <origin xyz="0 0 0.056" rpy="0 0 0" />
+  </joint>
+  <link name="$(arg prefix)/camera_frame">
+  </link>
+  <joint name="$(arg prefix)/camera_optical_frame_joint" type="fixed">
+    <parent link="$(arg prefix)/camera_frame"/>
+    <child  link="$(arg prefix)/camera_optical_frame"/>
+    <origin xyz="0 0 0" rpy="${-(90-8.277)*M_PI/180} 0 ${-90*M_PI/180}" />
+  </joint>
+  <link name="$(arg prefix)/camera_optical_frame">
+  </link>
+</robot>

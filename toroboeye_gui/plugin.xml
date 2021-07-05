@@ -1,0 +1,16 @@
+<library path="src">
+  <class name="ToroboEyeOperator" type="toroboeye_gui.toroboeye_operator.ToroboEyeOperator" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      ToroboEye Operator App
+    </description>
+    <qtgui>
+      <group>
+	      <label>ToroboEyeGui</label>
+        <icon type="theme">folder</icon>
+      </group>
+      <label>ToroboEye Operator</label>
+      <icon type="theme">applications-other</icon>
+      <statustip>ToroboEye Operator App</statustip>
+    </qtgui>
+  </class>
+</library>

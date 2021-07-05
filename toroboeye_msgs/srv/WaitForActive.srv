@@ -1,0 +1,4 @@
+float64 timeout         # specify timeout duration seconds.
+---
+bool success          # True if the call succeeded.
+string message        # Used to give details when success response is false.

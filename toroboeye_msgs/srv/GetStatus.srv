@@ -1,0 +1,5 @@
+uint32 id
+---
+bool success          # True if the call succeeded.
+string message        # Used to give details when success response is false.
+uint32 state
