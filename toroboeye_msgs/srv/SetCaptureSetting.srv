@@ -1,11 +1,13 @@
-uint32 device_illuminant_power  #range: from 1 to 8
-uint32 depth_illuminant_color   #example: toroboeye.Setting.DEPTH.ILLUMINANT_COLOR.RED
-uint32 depth_coding_pattern     #example: toroboeye.Setting.DEPTH.CODING_PATTERN.GRAYCODE_BASE
-uint32 depth_accuracy           #range: from 0 to 9
-uint32 depth_exposure_time      #range: from 0 to 9
-uint32 color_strobe_intensity   #range: from 1 to 8
-uint32 color_exposure_time      #range: from 0 to 9
-string data                     #(string, byte) -string or byte data
+uint32 device_illuminant_power           # range: from 1 to 8
+uint32 depth_illuminant_color            # example: toroboeye.Setting.DEPTH.ILLUMINANT_COLOR.RED
+uint32 depth_coding_pattern              # example: toroboeye.Setting.DEPTH.CODING_PATTERN.GRAYCODE_BASE
+uint32 depth_accuracy                    # range: from 1 to 9
+uint32 depth_exposure_time               # range: from 1 to 9 (set 0 when using multi exposure times)
+uint32[] depth_multiple_exposure_times   # range: from 1 to 9
+uint32 depth_adequate_score              # range: from 0 to 255
+uint32 color_strobe_intensity            # range: from 1 to 8
+uint32 color_exposure_time               # range: from 1 to 9
+string data                              # (string, byte) -string or byte data
 ---
-bool success          # True if the call succeeded.
-string message        # Used to give details when success response is false.
+bool success                             # True if the call succeeded.
+string message                           # Used to give details when success response is false.

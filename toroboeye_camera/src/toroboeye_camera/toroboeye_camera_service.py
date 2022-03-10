@@ -111,6 +111,10 @@ class ToroboeyeCameraService():
             res.success = False
             res.message = e.message
             rospy.logerr(e.message)
+
+        # update intrinsics member
+        self._service_get_intrinsics_callback(None)
+
         return res
 
     def _service_disconnect_callback(self, req):
@@ -124,6 +128,10 @@ class ToroboeyeCameraService():
             res.success = False
             res.message = e.message
             rospy.logerr(e.message)
+
+        # update intrinsics member
+        self._intrinsics = None
+
         return res
 
     def _service_get_capture_setting_callback(self, req):
@@ -136,7 +144,14 @@ class ToroboeyeCameraService():
                 res.depth_illuminant_color                            = self._tc.get(toroboeye.Setting.DEPTH.ILLUMINANT_COLOR.ID)
                 res.depth_coding_pattern                              = self._tc.get(toroboeye.Setting.DEPTH.CODING_PATTERN.ID)
                 res.depth_accuracy                                    = self._tc.get(toroboeye.Setting.DEPTH.ACCURACY.ID)
-                res.depth_exposure_time                               = self._tc.get(toroboeye.Setting.DEPTH.EXPOSURE_TIME.ID)
+                exposure_time                                         = self._tc.get(toroboeye.Setting.DEPTH.EXPOSURE_TIME.ID)
+                if type(exposure_time) is int:
+                    res.depth_exposure_time                           = exposure_time
+                    res.depth_multiple_exposure_times                 = []
+                else: # type is list
+                    res.depth_exposure_time                           = 0
+                    res.depth_multiple_exposure_times                 = exposure_time
+                res.depth_adequate_score                              = self._tc.get(toroboeye.Setting.DEPTH.ADEQUATE_SCORE.ID)
                 res.color_strobe_intensity                            = self._tc.get(toroboeye.Setting.COLOR.STROBE_INTENSITY.ID)
                 res.color_exposure_time                               = self._tc.get(toroboeye.Setting.COLOR.EXPOSURE_TIME.ID)
                 res.device_configuration                              = Device() 
@@ -173,14 +188,20 @@ class ToroboeyeCameraService():
         res = SetCaptureSettingResponse()
         res.success = True
         res.message = ''
+
+        if len(req.depth_multiple_exposure_times) == 0:
+            depth_exposure_time = req.depth_exposure_time
+        else:
+            depth_exposure_time = int(''.join(map(str, req.depth_multiple_exposure_times)))
         try:
-            self._tc.set(toroboeye.Setting.DEVICE.ILLUMINANT_POWER.ID    , req.device_illuminant_power      , req.data)
-            self._tc.set(toroboeye.Setting.DEPTH.ILLUMINANT_COLOR.ID     , req.depth_illuminant_color       , req.data)
-            self._tc.set(toroboeye.Setting.DEPTH.CODING_PATTERN.ID       , req.depth_coding_pattern         , req.data)
-            self._tc.set(toroboeye.Setting.DEPTH.ACCURACY.ID             , req.depth_accuracy               , req.data)
-            self._tc.set(toroboeye.Setting.DEPTH.EXPOSURE_TIME.ID        , req.depth_exposure_time          , req.data)
-            self._tc.set(toroboeye.Setting.COLOR.STROBE_INTENSITY.ID     , req.color_strobe_intensity       , req.data)
-            self._tc.set(toroboeye.Setting.COLOR.EXPOSURE_TIME.ID        , req.color_exposure_time          , req.data)
+            self._tc.set(toroboeye.Setting.DEVICE.ILLUMINANT_POWER.ID    , req.device_illuminant_power )
+            self._tc.set(toroboeye.Setting.DEPTH.ILLUMINANT_COLOR.ID     , req.depth_illuminant_color  )
+            self._tc.set(toroboeye.Setting.DEPTH.CODING_PATTERN.ID       , req.depth_coding_pattern    )
+            self._tc.set(toroboeye.Setting.DEPTH.ACCURACY.ID             , req.depth_accuracy          )
+            self._tc.set(toroboeye.Setting.DEPTH.EXPOSURE_TIME.ID        , depth_exposure_time     )
+            self._tc.set(toroboeye.Setting.DEPTH.ADEQUATE_SCORE.ID       , req.depth_adequate_score    )
+            self._tc.set(toroboeye.Setting.COLOR.STROBE_INTENSITY.ID     , req.color_strobe_intensity  )
+            self._tc.set(toroboeye.Setting.COLOR.EXPOSURE_TIME.ID        , req.color_exposure_time     )
         except Exception as e:
             res.success = False
             res.message = e.message

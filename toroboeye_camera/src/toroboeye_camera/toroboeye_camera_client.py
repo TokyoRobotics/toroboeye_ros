@@ -134,6 +134,8 @@ def set_capture_setting(
             depth_coding_pattern    = toroboeye.Setting.DEPTH.CODING_PATTERN.GRAYCODE_BASE,
             depth_accuracy          = 2,
             depth_exposure_time     = 1,
+            depth_multiple_exposure_times = [],
+            depth_adequate_score    = 40,
             color_strobe_intensity  = 4,
             color_exposure_time     = 1
             ):
@@ -146,6 +148,8 @@ def set_capture_setting(
             depth_coding_pattern   ,
             depth_accuracy         ,
             depth_exposure_time    ,
+            depth_multiple_exposure_times,
+            depth_adequate_score   ,
             color_strobe_intensity ,
             color_exposure_time    ,
             ""                      

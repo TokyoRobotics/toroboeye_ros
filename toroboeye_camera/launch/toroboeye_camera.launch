@@ -1,7 +1,7 @@
 <launch>
       <arg name="ns" default="toroboeye"/>
       <arg name="pub" default="true"/>
-      <arg name="publish_rate" default="1"/>
+      <arg name="publish_rate" default="5"/>
 
       <group ns="$(arg ns)">
       

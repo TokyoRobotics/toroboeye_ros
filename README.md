@@ -65,11 +65,12 @@ sudo apt update
 sudo apt install -y ros-melodic-desktop-full
 echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
 source ~/.bashrc
-sudo apt install -y python-rosdep python-rosinstall python-rosinstall-generator python-wstool
-sudo apt install -y python-rosinstall python-catkin-tools
-sudo apt install -y python-rosdep
+sudo apt install -y python-rosdep python-rosinstall python-rosinstall-generator python-wstool python-catkin-tools
 sudo rosdep init
 rosdep update
+source ~/.bashrc
+echo "source `catkin locate --shell-verbs`" >> ~/.bashrc
+source ~/.bashrc
 ```
 
 #### catkin_ws setup

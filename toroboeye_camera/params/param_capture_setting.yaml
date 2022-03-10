@@ -1,8 +1,10 @@
-device_ip_address            : 192.168.1.59
+device_ip_address            : torobo-desktop.local
 device_illuminant_power      : 8
 depth_illuminant_color_index : 0
 depth_coding_pattern_index   : 0
 depth_accuracy               : 2
 depth_exposure_time          : 1
+depth_multiple_exposure_times: []
+depth_adequate_score         : 40
 color_strobe_intensity       : 4
 color_exposure_time          : 1

@@ -122,6 +122,8 @@ class ToroboEyeOperator(Plugin):
         self._default_depth_coding_pattern_index   = rospy.get_param("depth_coding_pattern_index")
         self._default_depth_accuracy               = rospy.get_param("depth_accuracy")
         self._default_depth_exposure_time          = rospy.get_param("depth_exposure_time")
+        self._default_depth_multiple_exposure_times= rospy.get_param("depth_multiple_exposure_times")
+        self._default_depth_adequate_score         = rospy.get_param("depth_adequate_score")
         self._default_color_strobe_intensity       = rospy.get_param("color_strobe_intensity")
         self._default_color_exposure_time          = rospy.get_param("color_exposure_time")
 
@@ -163,6 +165,11 @@ class ToroboEyeOperator(Plugin):
 
 	    # save and laod paramter file directory 
         self._dir_path_of_toroboeye_conf = os.path.join(roslib.packages.get_pkg_dir('toroboeye_camera'), 'params')
+
+        # set default
+        self._widget.objPushButton_Settings_SetDefault.click()
+        self._widget.objPushButton_Device_SetDefault.click()
+
     
     def shutdown_plugin(self):
         self.destroy()
@@ -188,7 +195,6 @@ class ToroboEyeOperator(Plugin):
 
         # Slider (value)
         self._widget.objSlider_Depth_Accuracy.valueChanged.connect(self._slot_value_changed)
-        self._widget.objSlider_Depth_ExposureTime.valueChanged.connect(self._slot_value_changed)
         self._widget.objSlider_Color_StrobeIntensity.valueChanged.connect(self._slot_value_changed)
         self._widget.objSlider_Color_ExposureTime.valueChanged.connect(self._slot_value_changed)
         self._widget.objSlider_Device_IlluminantPower.valueChanged.connect(self._slot_value_changed)
@@ -196,6 +202,17 @@ class ToroboEyeOperator(Plugin):
         ## Action menu (push button)
         self._widget.actionSaveSettings.clicked.connect(self._slot_button_clicked)
         self._widget.actionLoadSettings.clicked.connect(self._slot_button_clicked)
+
+        # Map for multi exposure checkboxes
+        self._multi_exposure_checkbox_map = {}
+        self._multi_exposure_checkbox_map[1] = self._widget.objCheckBox_Depth_ExposureTime_1
+        self._multi_exposure_checkbox_map[2] = self._widget.objCheckBox_Depth_ExposureTime_2
+        self._multi_exposure_checkbox_map[3] = self._widget.objCheckBox_Depth_ExposureTime_3
+        self._multi_exposure_checkbox_map[4] = self._widget.objCheckBox_Depth_ExposureTime_4
+        self._multi_exposure_checkbox_map[5] = self._widget.objCheckBox_Depth_ExposureTime_5
+        self._multi_exposure_checkbox_map[6] = self._widget.objCheckBox_Depth_ExposureTime_6
+        self._multi_exposure_checkbox_map[7] = self._widget.objCheckBox_Depth_ExposureTime_7
+
 
     def _update_qtui_slot(self, callback):
         callback()
@@ -213,7 +230,12 @@ class ToroboEyeOperator(Plugin):
             self._widget.objComboBox_Depth_IlluminantColor.setCurrentIndex(self._default_depth_illuminant_color_index)
             self._widget.objComboBox_Depth_CodingPattern.setCurrentIndex(self._default_depth_coding_pattern_index)
             self._widget.objSlider_Depth_Accuracy.setValue(self._default_depth_accuracy)
-            self._widget.objSlider_Depth_ExposureTime.setValue(self._default_depth_exposure_time)
+            for k, v in self._multi_exposure_checkbox_map.items():
+                if k == self._default_depth_exposure_time or k in self._default_depth_multiple_exposure_times:
+                    v.setChecked(True)
+                else:
+                    v.setChecked(False)
+            self._widget.objSpinBox_Depth_Adequate_Score.setValue(self._default_depth_adequate_score)
             self._widget.objSlider_Color_StrobeIntensity.setValue(self._default_color_strobe_intensity)
             self._widget.objSlider_Color_ExposureTime.setValue(self._default_color_exposure_time)
 
@@ -226,7 +248,7 @@ class ToroboEyeOperator(Plugin):
             default_capture_settings = None
             
             with open(os.path.join(self._dir_path_of_toroboeye_conf, "param_capture_setting.yaml")) as file:
-                default_capture_settings = yaml.load(file, Loader=yaml.FullLoader)
+                default_capture_settings = yaml.load(file, Loader=yaml.SafeLoader)
 
             children = self._widget.objTabWidget.findChildren(QSlider)
             for child in children:
@@ -235,12 +257,25 @@ class ToroboEyeOperator(Plugin):
                     default_capture_settings["device_illuminant_power"] = child.value()
                 elif(child.objectName() == "objSlider_Depth_Accuracy"):
                     default_capture_settings["depth_accuracy"] = child.value()
-                elif(child.objectName() == "objSlider_Depth_ExposureTime"):
-                    default_capture_settings["depth_exposure_time"] = child.value()
+                # elif(child.objectName() == "objSlider_Depth_ExposureTime"):
+                #     default_capture_settings["depth_exposure_time"] = child.value()
                 elif(child.objectName() == "objSlider_Color_ExposureTime"):
                     default_capture_settings["color_exposure_time"] = child.value()
                 elif(child.objectName() == "objSlider_Color_StrobeIntensity"):
                     default_capture_settings["color_strobe_intensity"] = child.value()
+
+            depth_multiple_exposure_times = []
+            depth_exposure_time = 0
+            for i in range(1, 8):
+                if self._multi_exposure_checkbox_map[i].isChecked():
+                    depth_multiple_exposure_times.append(i)
+                    depth_exposure_time = i
+            if len(depth_multiple_exposure_times) > 1:
+                depth_exposure_time = 0
+            default_capture_settings["depth_exposure_time"] = depth_exposure_time
+            default_capture_settings["depth_multiple_exposure_times"] = depth_multiple_exposure_times
+
+            default_capture_settings["depth_adequate_score"] = self._widget.objSpinBox_Depth_Adequate_Score.value()
 
             children = self._widget.objTabWidget.findChildren(QComboBox)
             for child in children:
@@ -284,8 +319,21 @@ class ToroboEyeOperator(Plugin):
 
             self._widget.objComboBox_Depth_IlluminantColor.setCurrentIndex(load_parameters["depth_illuminant_color_index"])
             self._widget.objComboBox_Depth_CodingPattern.setCurrentIndex(load_parameters["depth_coding_pattern_index"])
+            self._widget.objSlider_Device_IlluminantPower.setValue(load_parameters["device_illuminant_power"])
             self._widget.objSlider_Depth_Accuracy.setValue(load_parameters["depth_accuracy"])
-            self._widget.objSlider_Depth_ExposureTime.setValue(load_parameters["depth_accuracy"])
+            # self._widget.objSlider_Depth_ExposureTime.setValue(load_parameters["depth_accuracy"])
+
+
+            depth_multiple_exposure_times = load_parameters["depth_multiple_exposure_times"]
+            depth_exposure_time = load_parameters["depth_exposure_time"]
+            for i in range(1, 8):
+                if i == depth_exposure_time or i in depth_multiple_exposure_times:
+                    self._multi_exposure_checkbox_map[i].setChecked(True)
+                else:
+                    self._multi_exposure_checkbox_map[i].setChecked(False)
+
+            self._widget.objSpinBox_Depth_Adequate_Score.setValue(load_parameters["depth_adequate_score"])
+
             self._widget.objSlider_Color_StrobeIntensity.setValue(load_parameters["color_strobe_intensity"])
             self._widget.objSlider_Color_ExposureTime.setValue(load_parameters["color_exposure_time"])
             self._widget.objLineEdit_IpAddress.setText(load_parameters["device_ip_address"])
@@ -312,9 +360,22 @@ class ToroboEyeOperator(Plugin):
                 self._widget.objPushButton_Activate.blockSignals(True)
                 self._widget.objPushButton_Activate.setChecked(False)
                 self._widget.objPushButton_Activate.blockSignals(False)
-                if self._widget.objComboBox_Depth_IlluminantColor.currentText() == 'WHITE' and self._widget.objSlider_Depth_ExposureTime.value() <= 2:
-                    # self._update_qtui_signal.emit(lambda: self._widget.objPlainTextEdit_Log.document().setPlainText("'Settings::Depth::Exposure_time' must be '3' or more\nwhen 'Settings::Depth::Illuminant_color' is 'WHITE'"))
-                    ret = QMessageBox.warning(None, "Warning", "'Settings::Depth::Exposure_time' must be '3' or more\nwhen 'Settings::Depth::Illuminant_color' is 'WHITE'", QMessageBox.Ok) 
+                # if self._widget.objComboBox_Depth_IlluminantColor.currentText() == 'WHITE' and self._widget.objSlider_Depth_ExposureTime.value() <= 2:
+                #     # self._update_qtui_signal.emit(lambda: self._widget.objPlainTextEdit_Log.document().setPlainText("'Settings::Depth::Exposure_time' must be '3' or more\nwhen 'Settings::Depth::Illuminant_color' is 'WHITE'"))
+                #     ret = QMessageBox.warning(None, "Warning", "'Settings::Depth::Exposure_time' must be '3' or more\nwhen 'Settings::Depth::Illuminant_color' is 'WHITE'", QMessageBox.Ok) 
+                #     return
+                if self._widget.objComboBox_Depth_IlluminantColor.currentText() == 'WHITE' and \
+                   (self._multi_exposure_checkbox_map[1].isChecked() or self._multi_exposure_checkbox_map[2].isChecked()):
+                    ret = QMessageBox.warning(self, "Warning", "'Settings::Depth::Exposure_time' must be '3' or more\nwhen 'Settings::Depth::Illuminant_color' is 'WHITE'", QMessageBox.Ok)
+                    return
+                if (not self._multi_exposure_checkbox_map[1].isChecked() and \
+                    not self._multi_exposure_checkbox_map[2].isChecked() and \
+                    not self._multi_exposure_checkbox_map[3].isChecked() and \
+                    not self._multi_exposure_checkbox_map[4].isChecked() and \
+                    not self._multi_exposure_checkbox_map[5].isChecked() and \
+                    not self._multi_exposure_checkbox_map[6].isChecked() and \
+                    not self._multi_exposure_checkbox_map[7].isChecked() ):
+                    ret = QMessageBox.warning(self, "Warning", "'Settings::Depth::Exposure_time' must be specified one value.", QMessageBox.Ok)
                     return
                 self._executor_submit(self.__camera_activate)   
             else:
@@ -342,9 +403,6 @@ class ToroboEyeOperator(Plugin):
         if sender == self._widget.objSlider_Depth_Accuracy:
             self._widget.objLabel_Depth_Accuracy.setText(str(value))
             
-        if sender == self._widget.objSlider_Depth_ExposureTime:
-            self._widget.objLabel_Depth_ExposureTime.setText(str(value))
-
         if sender == self._widget.objSlider_Color_StrobeIntensity:
             self._widget.objLabel_Color_StrobeIntensity.setText(str(value))
 
@@ -391,11 +449,13 @@ class ToroboEyeOperator(Plugin):
             state_activation            = get_response.state_activation
             state_processing            = get_response.state_processing
             device_illuminant_power     = get_response.device_illuminant_power
-            depth_illuminant_color      = get_response.depth_illuminant_color 
-            depth_coding_pattern        = get_response.depth_coding_pattern   
-            depth_accuracy              = get_response.depth_accuracy         
-            depth_exposure_time         = get_response.depth_exposure_time    
-            color_strobe_intensity      = get_response.color_strobe_intensity 
+            depth_illuminant_color      = get_response.depth_illuminant_color
+            depth_coding_pattern        = get_response.depth_coding_pattern
+            depth_accuracy              = get_response.depth_accuracy
+            depth_exposure_time         = get_response.depth_exposure_time
+            depth_multiple_exposure_times  = get_response.depth_multiple_exposure_times
+            depth_adequate_score        = get_response.depth_adequate_score
+            color_strobe_intensity      = get_response.color_strobe_intensity
             color_exposure_time         = get_response.color_exposure_time
 
             self._intrinsics            = tc.get_intrinsics().intrinsics
@@ -479,9 +539,23 @@ class ToroboEyeOperator(Plugin):
             self._widget.objComboBox_Depth_IlluminantColor.setCurrentIndex(illuminant_color_index),
             self._widget.objComboBox_Depth_CodingPattern.setCurrentIndex(depth_coding_pattern_index),
             self._widget.objSlider_Depth_Accuracy.setValue(depth_accuracy),
-            self._widget.objSlider_Depth_ExposureTime.setValue(depth_exposure_time),
+            # self._widget.objSlider_Depth_ExposureTime.setValue(depth_exposure_time),
+            self._widget.objSpinBox_Depth_Adequate_Score.setValue(depth_adequate_score),
             self._widget.objSlider_Color_StrobeIntensity.setValue(color_strobe_intensity),
             self._widget.objSlider_Color_ExposureTime.setValue(color_exposure_time)
+            ])
+
+        if type(depth_exposure_time) is not list:
+            depth_exposure_time = [depth_exposure_time]
+
+        self._update_qtui_signal.emit(lambda: [
+            self._multi_exposure_checkbox_map[1].setChecked((1 in depth_exposure_time or 1 in depth_multiple_exposure_times)),
+            self._multi_exposure_checkbox_map[2].setChecked((2 in depth_exposure_time or 2 in depth_multiple_exposure_times)),
+            self._multi_exposure_checkbox_map[3].setChecked((3 in depth_exposure_time or 3 in depth_multiple_exposure_times)),
+            self._multi_exposure_checkbox_map[4].setChecked((4 in depth_exposure_time or 4 in depth_multiple_exposure_times)),
+            self._multi_exposure_checkbox_map[5].setChecked((5 in depth_exposure_time or 5 in depth_multiple_exposure_times)),
+            self._multi_exposure_checkbox_map[6].setChecked((6 in depth_exposure_time or 6 in depth_multiple_exposure_times)),
+            self._multi_exposure_checkbox_map[7].setChecked((7 in depth_exposure_time or 7 in depth_multiple_exposure_times)),
             ])
 
         self._update_qtui_signal.emit(lambda: [
@@ -535,19 +609,28 @@ class ToroboEyeOperator(Plugin):
         depth_illuminant_color     = str(self._widget.objComboBox_Depth_IlluminantColor.currentText())
         depth_coding_pattern       = str(self._widget.objComboBox_Depth_CodingPattern.currentText())
         depth_accuracy             = self._widget.objSlider_Depth_Accuracy.value()
-        depth_exposure_time        = self._widget.objSlider_Depth_ExposureTime.value()
+        # depth_exposure_time        = self._widget.objSlider_Depth_ExposureTime.value()
         color_strobe_intensity     = self._widget.objSlider_Color_StrobeIntensity.value()
         color_exposure_time        = self._widget.objSlider_Color_ExposureTime.value()
+
+        depth_exposure_time        = self.__read_depth_exposure_time()
+        depth_multiple_exposure_time = []
+        if type(depth_exposure_time) is list:
+            depth_multiple_exposure_times = depth_exposure_time
+            depth_exposure_time    = 0
+        depth_adequate_score       = self._widget.objSpinBox_Depth_Adequate_Score.value()
 
         try:
             tc.set_capture_setting(
                 device_illuminant_power,                                                    
                 getattr(toroboeye.Setting.DEPTH.ILLUMINANT_COLOR, depth_illuminant_color),  
                 getattr(toroboeye.Setting.DEPTH.CODING_PATTERN,  depth_coding_pattern)  ,   
-                depth_accuracy         ,                                                    
-                depth_exposure_time    ,                                                    
-                color_strobe_intensity ,                                                    
-                color_exposure_time                                                         
+                depth_accuracy         ,
+                depth_exposure_time    ,
+                depth_multiple_exposure_times,
+                depth_adequate_score   ,
+                color_strobe_intensity ,
+                color_exposure_time
             )
 
         except Exception as e:
@@ -581,6 +664,28 @@ class ToroboEyeOperator(Plugin):
             print(traceback_message)
             self._update_qtui_signal.emit(lambda: self._widget.objPlainTextEdit_Log.document().setPlainText(traceback_message))
             return
+
+
+    def __read_depth_exposure_time(self):
+
+        depth_exposure_time_list = []
+
+        if(self._widget.objCheckBox_Depth_ExposureTime_1.isChecked()):
+            depth_exposure_time_list.append(1)
+        if(self._widget.objCheckBox_Depth_ExposureTime_2.isChecked()):
+            depth_exposure_time_list.append(2)
+        if(self._widget.objCheckBox_Depth_ExposureTime_3.isChecked()):
+            depth_exposure_time_list.append(3)
+        if(self._widget.objCheckBox_Depth_ExposureTime_4.isChecked()):
+            depth_exposure_time_list.append(4)
+        if(self._widget.objCheckBox_Depth_ExposureTime_5.isChecked()):
+            depth_exposure_time_list.append(5)
+        if(self._widget.objCheckBox_Depth_ExposureTime_6.isChecked()):
+            depth_exposure_time_list.append(6)
+        if(self._widget.objCheckBox_Depth_ExposureTime_7.isChecked()):
+            depth_exposure_time_list.append(7)
+    
+        return depth_exposure_time_list
 
 
     def __camera_deactivate(self):
@@ -651,7 +756,7 @@ class ToroboEyeOperator(Plugin):
 
         try:
             tc.capture(oneshot=True)
-            frame = tc.wait_for_frame(timeout=5.0)
+            frame = tc.wait_for_frame(timeout=30.0)
 
         except Exception as e:
             traceback_message = traceback.format_exc()

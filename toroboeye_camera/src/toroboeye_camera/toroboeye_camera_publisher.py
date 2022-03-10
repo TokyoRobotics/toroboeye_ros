@@ -45,13 +45,16 @@ class ToroboeyeCameraPublisher():
         self._camera_info = CameraInfo()
         # prefix = rospy.get_param("toroboeye_camera_publisher_node/prefix")
 
-
         self._pub_color_image = rospy.Publisher('color/image', Image, queue_size = 1)
         self._pub_camera_info = rospy.Publisher('camera_info', CameraInfo, queue_size = 1)
         self._pub_depth_image = rospy.Publisher('depth/image', Image, queue_size = 1)
 
         publish_rate = rospy.get_param("toroboeye_camera_publisher_node/publish_rate")
-        rospy.Timer(rospy.Duration(publish_rate), self.captured_frame_callback)
+        if publish_rate < 0.1:
+            publish_duration = 10.0
+        else:
+            publish_duration = 1.0 / float(publish_rate)
+        rospy.Timer(rospy.Duration(publish_duration), self.captured_frame_callback)
     
     def captured_frame_callback(self, event=None):
         #### update frame by compare timestamp ####
@@ -63,12 +66,12 @@ class ToroboeyeCameraPublisher():
     def update_captured_frame(self):
 
         frame = toroboeye_camera_client.update_frame()
+        self._camera_info = toroboeye_camera_client.update_intrinsics().intrinsics
 
         if (self._frame == None):
             self._frame = frame
 
         elif (frame.timestamp > self._frame.timestamp):
-            self._camera_info = toroboeye_camera_client.update_intrinsics().intrinsics
             self._frame = frame
                 
     def publish_camera_messages(self):
