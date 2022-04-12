@@ -418,8 +418,8 @@ class ToroboeyeCameraService():
             cx = intrinsics.cx
             cy = intrinsics.cy
 
-            res.intrinsics.height           = intrinsics.height
-            res.intrinsics.width            = intrinsics.width
+            res.intrinsics.height           = int(intrinsics.height)
+            res.intrinsics.width            = int(intrinsics.width)
             res.intrinsics.distortion_model = intrinsics.model
             res.intrinsics.D                = intrinsics.dist_coeffs
             res.intrinsics.K                = [fx, 0, cx, 0, fy, cy, 0, 0, 1]
