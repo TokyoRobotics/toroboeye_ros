@@ -1,0 +1,9 @@
+<launch>
+      <arg name="ns" default="toroboeye"/>
+      <group ns="$(arg ns)">
+            <param name="/$(arg ns)/robot_description" command="$(find xacro)/xacro $(find toroboeye_description)/urdf/sl80.urdf.xacro prefix:=$(arg ns)"/>
+            <param name="use_gui" value="false"/>
+            <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+            <node pkg="rviz" name="rviz" type="rviz" args="-d $(find toroboeye_description)/rviz/rviz_config.rviz" output="screen"/>
+      </group>
+</launch>

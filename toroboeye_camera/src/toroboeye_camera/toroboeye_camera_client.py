@@ -283,14 +283,14 @@ def wait_for_inactive(timeout=None):
 def wait_for_frame(timeout = 5.0):
     try:
         service = rospy.ServiceProxy('wait_for_frame',WaitForFrame)
-        rospy.loginfo("Getting Captured Flame. . .")
+        rospy.loginfo("Getting Captured Frame. . .")
         response = service(timeout)
         if response.success:
             rospy.loginfo("Successfully Getting Captured Frame.")
         else:
             rospy.logerr(response.message)
     except rospy.ServiceException as e:
-        rospy.logerr("Failed to get Captured Flame.")
+        rospy.logerr("Failed to get Captured Frame.")
         raise
     else:
         if not response.success:
@@ -300,14 +300,14 @@ def wait_for_frame(timeout = 5.0):
 def update_frame(timeout = 5.0):
     try:
         service = rospy.ServiceProxy('update_frame',WaitForFrame)
-        rospy.loginfo("Getting Captured Flame. . .")
+        rospy.loginfo("Getting Captured Frame. . .")
         response = service(timeout)
         if response.success:
             rospy.loginfo("Successfully Getting Captured Frame.")
         else:
             rospy.logerr(response.message)
     except rospy.ServiceException as e:
-        rospy.logerr("Failed to get Captured Flame.")
+        rospy.logerr("Failed to get Captured Frame.")
         raise
     else:
         if not response.success:

@@ -1,6 +1,6 @@
-device_ip_address            : torobo-desktop.local
-device_illuminant_power      : 8
-depth_illuminant_color_index : 0
+device_ip_address            : toroboeye-controller.local
+device_illuminant_power      : 4
+depth_illuminant_color_index : 1
 depth_coding_pattern_index   : 0
 depth_accuracy               : 2
 depth_exposure_time          : 1

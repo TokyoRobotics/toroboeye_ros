@@ -103,7 +103,7 @@
              </font>
             </property>
             <property name="text">
-             <string>torobo-desktop.local</string>
+             <string>toroboeye-controller.local</string>
             </property>
            </widget>
           </item>

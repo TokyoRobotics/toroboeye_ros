@@ -303,7 +303,7 @@ class ToroboeyeCameraService():
         try:               
             self._is_activation = (self._tc.get(toroboeye.State.ACTIVATION.ID) == toroboeye.State.ACTIVATION.ACTIVE)
             if(self._is_connection and self._is_activation):
-                frame = self._tc.wait_for_frame(req.timeout)
+                frame = self._tc.wait_for_frame(timeout=req.timeout)
                 if(frame.timestamp > self._frame_timestamp):
 
                     self._frame           = frame
