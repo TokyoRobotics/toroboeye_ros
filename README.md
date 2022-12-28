@@ -2,7 +2,8 @@
 
 The `toroboeye_ros` provides a ROS interface for the [toroboeye](https://robotics.tokyo/ja/products/torobo_eye/).
 <p align="center">
-    <img src="https://robotics.tokyo/images/products/torobo_eye/sl40_camera_head.png" width="600" height="489">
+    <img src="https://robotics.tokyo/images/products/torobo_eye/sl40_camera_head.png" style="width: auto; height: 170px;" />
+    <img src="https://robotics.tokyo/images/products/torobo_eye/sl80_camera_head.png" style="width: auto; height: 200px;" />
 </p>
 
 ## Table of Contents
@@ -48,7 +49,9 @@ This package has only been tested for the one recommended above.
 ### ROS installation
 This operation is unnecessary if ROS Melodic Morenia has already been installed.
 
-#### Install build essentials
+#### Install ROS Melodic Morenia
+Install build essentials
+
 ```bash
 sudo apt update -y
 sudo apt install -y build-essential
@@ -56,7 +59,8 @@ sudo apt install -y python-dev
 sudo apt install -y python-pip
 ```
 
-#### Install ROS Melodic Morenia
+Install ROS Melodic Morenia
+
 ```bash
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 sudo apt install -y curl
@@ -72,6 +76,34 @@ source ~/.bashrc
 echo "source `catkin locate --shell-verbs`" >> ~/.bashrc
 source ~/.bashrc
 ```
+
+#### Install ROS Noetic Ninjemys
+Install build essentials
+
+```bash
+sudo apt update -y
+sudo apt install -y build-essential
+sudo apt install -y python-dev
+sudo apt install -y python-pip
+```
+
+Install ROS Noetic Ninjemys
+```bash
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+sudo apt install -y curl
+curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+sudo apt update 
+sudo apt install -y ros-noetic-desktop-full
+echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+sudo apt install -y python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool python3-catkin-tools
+sudo rosdep init
+rosdep update
+source ~/.bashrc
+echo "source `catkin locate --shell-verbs`" >> ~/.bashrc
+source ~/.bashrc
+```
+
 
 #### catkin_ws setup
 ```bash

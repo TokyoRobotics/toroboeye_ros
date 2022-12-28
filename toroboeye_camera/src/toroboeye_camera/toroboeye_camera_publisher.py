@@ -76,6 +76,7 @@ class ToroboeyeCameraPublisher():
                 
     def publish_camera_messages(self):
 
-        self._pub_color_image.publish(self._frame.color_image)
-        self._pub_depth_image.publish(self._frame.depth_image)
-        self._pub_camera_info.publish(self._camera_info)
+        if self._frame is not None:
+            self._pub_color_image.publish(self._frame.color_image)
+            self._pub_depth_image.publish(self._frame.depth_image)
+            self._pub_camera_info.publish(self._camera_info)

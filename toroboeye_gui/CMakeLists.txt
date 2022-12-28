@@ -14,10 +14,12 @@ catkin_package(
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
-install(PROGRAMS
+
+catkin_install_python(PROGRAMS
   scripts/toroboeye_gui
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
+
 install(DIRECTORY
   resource
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}

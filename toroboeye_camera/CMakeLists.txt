@@ -15,3 +15,10 @@ catkin_package(
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
+
+
+catkin_install_python(PROGRAMS
+  scripts/toroboeye_camera_publisher_node.py
+  scripts/toroboeye_camera_service_node.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)

@@ -68,8 +68,8 @@ def connect(ip):
             rospy.loginfo('Connection Successful.')
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
-        # print "service call failed: %s" % e
+    except rospy.ServiceException as e:
+        # print("service call failed: %s" % e)
         rospy.logerr(" Connection Failed. Plese Check LAN Cable Connection on controller.")
         raise
     else:
@@ -87,7 +87,7 @@ def disconnect():
             rospy.loginfo("Successful Disconnecting.")
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
+    except rospy.ServiceException as e:
         rospy.logerr("Failed to Disconnect.")
         raise
     else:
@@ -103,7 +103,7 @@ def get_capture_setting():
             rospy.loginfo('Loading to Completed.' )
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
+    except rospy.ServiceException as e:
         rospy.logerr("Failed to Loading Setting. Plese Check Controller Status")
         raise
     else:
@@ -120,7 +120,7 @@ def get_status(id):
             rospy.loginfo('Confirmed Status.')
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
+    except rospy.ServiceException as e:
         rospy.logerr("Failed to Confirm Status.")
         raise
     else:
@@ -159,8 +159,8 @@ def set_capture_setting(
             rospy.loginfo("Successful Loading Capturing Setting.")
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
-        print "service call failed: %s" % e
+    except rospy.ServiceException as e:
+        print("service call failed: %s" % e)
         rospy.logerr("Failed to Load Current Capturing Setting.")
         raise
     else:
@@ -176,8 +176,8 @@ def write():
             rospy.loginfo('success')
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
-        print "service call failed: %s" % e
+    except rospy.ServiceException as e:
+        print("service call failed: %s" % e)
         raise
     else:
         if not response.success:
@@ -192,7 +192,7 @@ def activate():
             rospy.loginfo('Foward to Command...')
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
+    except rospy.ServiceException as e:
         rospy.loginfo("Failed to Activate.")
         raise
     else:
@@ -208,7 +208,7 @@ def deactivate():
             rospy.loginfo("Foward Command. . .")
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
+    except rospy.ServiceException as e:
         rospy.logerr("Failed to Deactivate")
         raise
     else:
@@ -224,9 +224,9 @@ def capture(oneshot = True):
             rospy.loginfo('Successful Oneshot Capturing')
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
+    except rospy.ServiceException as e:
         rospy.logerr("Failed to Capture. Please Check Activation")
-        print "service call failed: %s" % e
+        print("service call failed: %s" % e)
         raise
     else:
         if not response.success:
@@ -241,8 +241,8 @@ def wait_for_state(activation, processing, timeout=None):
             rospy.loginfo('success')
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
-        print "service call failed: %s" % e
+    except rospy.ServiceException as e:
+        print("service call failed: %s" % e)
         raise
     else:
         if not response.success:
@@ -257,7 +257,7 @@ def wait_for_active(timeout=None):
             rospy.loginfo('Successful Activation.')
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
+    except rospy.ServiceException as e:
         rospy.logerr("Failed to Activate.")
         raise
     else:
@@ -273,7 +273,7 @@ def wait_for_inactive(timeout=None):
             rospy.loginfo("Successful Deactication.")
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
+    except rospy.ServiceException as e:
         rospy.logerr("Failed to Deativate.")
         raise
     else:
@@ -283,14 +283,14 @@ def wait_for_inactive(timeout=None):
 def wait_for_frame(timeout = 5.0):
     try:
         service = rospy.ServiceProxy('wait_for_frame',WaitForFrame)
-        rospy.loginfo("Getting Captured Flame. . .")
+        rospy.loginfo("Getting Captured Frame. . .")
         response = service(timeout)
         if response.success:
             rospy.loginfo("Successfully Getting Captured Frame.")
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
-        rospy.logerr("Failed to get Captured Flame.")
+    except rospy.ServiceException as e:
+        rospy.logerr("Failed to get Captured Frame.")
         raise
     else:
         if not response.success:
@@ -300,14 +300,14 @@ def wait_for_frame(timeout = 5.0):
 def update_frame(timeout = 5.0):
     try:
         service = rospy.ServiceProxy('update_frame',WaitForFrame)
-        rospy.loginfo("Getting Captured Flame. . .")
+        rospy.loginfo("Getting Captured Frame. . .")
         response = service(timeout)
         if response.success:
             rospy.loginfo("Successfully Getting Captured Frame.")
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
-        rospy.logerr("Failed to get Captured Flame.")
+    except rospy.ServiceException as e:
+        rospy.logerr("Failed to get Captured Frame.")
         raise
     else:
         if not response.success:
@@ -323,7 +323,7 @@ def stop():
             rospy.loginfo('Successful Stoping Capturing')
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
+    except rospy.ServiceException as e:
         rospy.logerr("Failed to Stop Capturing.")
         raise
     else:
@@ -339,7 +339,7 @@ def get_intrinsics():
             rospy.loginfo('Loading Completed.')
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
+    except rospy.ServiceException as e:
         rospy.logerr("Failed to Loading Camera Parameter. Plese Check Contrtoller Status.")
         raise
     else:
@@ -356,7 +356,7 @@ def update_intrinsics():
             rospy.loginfo('Loading Completed.')
         else:
             rospy.logerr(response.message)
-    except rospy.ServiceException, e:
+    except rospy.ServiceException as e:
         rospy.logerr("Failed to Update Camera Parameter. Plese Check Contrtoller Status.")
         raise
     else:
