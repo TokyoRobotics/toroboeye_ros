@@ -78,7 +78,7 @@ class ToroboeyeCameraService():
 
         #### Depth Filter value ####
         self._adjustment_depth_scale      = rospy.get_param("adjustment_depth_scale")
-        self._upper_base_limit       = rospy.get_param("upper_base_limit")
+        self._upper_base_limit            = rospy.get_param("upper_base_limit")
         self._lower_amplitude_limit       = rospy.get_param("lower_amplitude_limit")
         self._gradient_threshold          = rospy.get_param("gradient_threshold")
         self._edge_dilation_value         = rospy.get_param("edge_dilation_value")
@@ -88,6 +88,14 @@ class ToroboeyeCameraService():
         self._max_area_y                  = rospy.get_param("max_area_y")
         self._depth_range_min             = rospy.get_param("depth_range_min")
         self._depth_range_max             = rospy.get_param("depth_range_max")
+
+        self._use_depth_median_filter     = rospy.get_param("use_depth_median_filter")
+        self._depth_median_filter_kernel_size = rospy.get_param("depth_median_filter_kernel_size")
+
+        self._use_depth_bilateral_filter  = rospy.get_param("use_depth_bilateral_filter")
+        self._depth_bilateral_filter_diameter = rospy.get_param("depth_bilateral_filter_diameter")
+        self._depth_bilateral_filter_sigma_depth = rospy.get_param("depth_bilateral_filter_sigma_depth")
+        self._depth_bilateral_filter_sigma_space = rospy.get_param("depth_bilateral_filter_sigma_space")
 
         #### Color Filter Value ####
         self._gain_red                    = rospy.get_param("colorbalance_gain_red")
@@ -332,26 +340,43 @@ class ToroboeyeCameraService():
         depth_image = copy.deepcopy(frame.depth_image)
         score_image = copy.deepcopy(frame.score_image)
 
-        color_image = toroboeye.utility.color.image_enhance(color_image,
-                                                            colorbalance_gain=[self._gain_red, self._gain_green, self._gain_blue],
-                                                            contrast_range=[self._input_range_min, self._input_range_max, self._output_range_min, self._output_range_max],
-                                                            brightness_gamma=self._brightness_gamma,
-                                                            sharpness_level=self._sharpness_level)
+        color_image = toroboeye.utility.color.image_enhance(
+            color_image,
+            colorbalance_gain=[self._gain_red, self._gain_green, self._gain_blue],
+            contrast_range=[self._input_range_min, self._input_range_max, self._output_range_min, self._output_range_max],
+            brightness_gamma=self._brightness_gamma,
+            sharpness_level=self._sharpness_level)
 
-        color_image = cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB)
-        
         #### cut reflection ####
-        depth_image = toroboeye.utility.depth.cutoff_by_reflection_properties(depth_image, score_image, amplitude_limit=self._upper_base_limit, base_limit=self._lower_amplitude_limit)
+        depth_image = toroboeye.utility.depth.cutoff_by_reflection_properties(
+            depth_image, score_image, amplitude_limit=self._upper_base_limit, base_limit=self._lower_amplitude_limit)
 
         #### cut noise by depth gradient ####
-        depth_image = toroboeye.utility.depth.cutoff_by_depth_gradient(depth_image, gradient_threshold=self._gradient_threshold, edge_dilation=self._edge_dilation_value)
+        depth_image = toroboeye.utility.depth.cutoff_by_depth_gradient(
+            depth_image, gradient_threshold=self._gradient_threshold, edge_dilation=self._edge_dilation_value)
 
         #### crop captured area #### 
-        depth_image = toroboeye.utility.depth.crop_area(depth_image, self._min_area_x, self._min_area_y, self._max_area_x, self._max_area_y)
+        depth_image = toroboeye.utility.depth.crop_area(
+            depth_image, self._min_area_x, self._min_area_y, self._max_area_x, self._max_area_y)
+
+        #### median filter ####
+        if self._use_depth_median_filter:
+            kernel_size = self._depth_median_filter_kernel_size
+            depth_image = toroboeye.utility.depth.median_filter(depth_image, kernel_size=kernel_size)
+
+        #### bilateral filter ####
+        if self._use_depth_bilateral_filter:
+            diameter    = self._depth_bilateral_filter_diameter
+            sigma_depth = self._depth_bilateral_filter_sigma_depth
+            sigma_space = self._depth_bilateral_filter_sigma_space
+            depth_image = toroboeye.utility.depth.bilateral_filter(depth_image, diameter=diameter, sigma_depth=sigma_depth, sigma_space=sigma_space)
 
         #### cut off depth calue by specific range ####
         depth_image = toroboeye.utility.depth.cutoff_out_of_depth_range(depth_image, self._depth_range_min, self._depth_range_max)  
 
+
+        #### create msgs
+        color_image = cv2.cvtColor(color_image, cv2.COLOR_BGR2RGB)
         depth_image /= self._adjustment_depth_scale
         depth_image = self._bridge.cv2_to_imgmsg(depth_image, "32FC1")        
         color_image = self._bridge.cv2_to_imgmsg(color_image, "rgb8")

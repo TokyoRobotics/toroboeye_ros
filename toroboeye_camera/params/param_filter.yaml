@@ -11,6 +11,13 @@ max_area_y             : 1080
 depth_range_min        : 200
 depth_range_max        : 700
 
+use_depth_median_filter : true
+depth_median_filter_kernel_size : 5
+use_depth_bilateral_filter : true
+depth_bilateral_filter_diameter : 7
+depth_bilateral_filter_sigma_depth : 5.0
+depth_bilateral_filter_sigma_space : 5.0
+
 #### Color Filter Value ####
 colorbalance_gain_red   : 1.5
 colorbalance_gain_green : 1.0
