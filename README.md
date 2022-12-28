@@ -2,8 +2,8 @@
 
 The `toroboeye_ros` provides a ROS interface for the [toroboeye](https://robotics.tokyo/ja/products/torobo_eye/).
 <p align="center">
-    <img srcset="https://robotics.tokyo/images/products/torobo_eye/sl40_camera_head.png 0.5x" />
-    <img srcset="https://robotics.tokyo/images/products/torobo_eye/sl80_camera_head.png 0.5x" />
+    <img src="https://robotics.tokyo/images/products/torobo_eye/sl40_camera_head.png" style="width: auto; height: 200px;" />
+    <img src="https://robotics.tokyo/images/products/torobo_eye/sl80_camera_head.png" style="width: auto; height: 200px;" />
 </p>
 
 ## Table of Contents
