@@ -3,7 +3,7 @@
     <arg name="camera" default="true"/>
     <arg name="rviz" default="true"/>
     <arg name="gui" default="true"/>
-    <arg name="product" default="sl80"/>  <!-- sl80 or sl40 -->
+    <arg name="model" default="sl80"/>  <!-- sl80 or sl40 -->
 
     <include if="$(arg camera)" file="$(find toroboeye_camera)/launch/toroboeye_camera.launch">
         <arg name="ns" value="$(arg ns)"/>
@@ -14,10 +14,10 @@
     </include>
 
     <group if="$(arg rviz)">
-        <include if="$(eval arg('product') == 'sl40')" file="$(find toroboeye_description)/launch/view_sl40_model.launch">
+        <include if="$(eval arg('model') == 'sl40')" file="$(find toroboeye_description)/launch/view_sl40_model.launch">
             <arg name="ns" value="$(arg ns)"/>
         </include>
-        <include if="$(eval arg('product') == 'sl80')" file="$(find toroboeye_description)/launch/view_sl80_model.launch">
+        <include if="$(eval arg('model') == 'sl80')" file="$(find toroboeye_description)/launch/view_sl80_model.launch">
             <arg name="ns" value="$(arg ns)"/>
         </include>
     </group>

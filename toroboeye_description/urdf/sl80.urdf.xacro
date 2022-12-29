@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<robot name="toroboeye_sl40" xmlns:xacro="http://ros.org/wiki/xacro">
-  <xacro:arg name="prefix" default="sl40_1"/>
+<robot name="toroboeye_sl80" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:arg name="prefix" default="toroboeye"/>
   <xacro:property name="M_PI" value="3.1415926535897931"/>
   <link name="$(arg prefix)/base_link"/>
   <joint name="$(arg prefix)/body_joint" type="fixed">

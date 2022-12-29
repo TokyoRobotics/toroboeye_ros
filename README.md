@@ -14,11 +14,10 @@ The `toroboeye_ros` provides a ROS interface for the [toroboeye](https://robotic
   - [Installation](#installation)
     - [Pytoroboeye installation](#pytoroboeye-installation)
     - [ROS installation](#ros-installation)
-      - [Install build essentials](#install-build-essentials)
       - [Install ROS Melodic Morenia](#install-ros-melodic-morenia)
-      - [catkin_ws setup](#catkin_ws-setup)
+      - [Install ROS Noetic Ninjemys](#install-ros-noetic-ninjemys)
+      - [Setup catkin_ws](#setup-catkin_ws)
       - [Clone toroboeye_ros](#clone-toroboeye_ros)
-      - [Install necessary Package for toroboeye_ros](#install-necessary-package-for-toroboeye_ros)
     - [Build toroboeye](#build-toroboeye)
   - [Getting Started](#getting-started)
     - [Launch Rviz and toroboeye GUI](#launch-rviz-and-toroboeye-gui)
@@ -28,7 +27,7 @@ The `toroboeye_ros` provides a ROS interface for the [toroboeye](https://robotic
 
 
 ## Supported versions
-The recommended configuration is ROS Melodic Morenia with Ubuntu 18.04.
+The recommended configuration is both ROS Melodic Morenia at Ubuntu 18.04 and ROS Noetic Ninjemys at Ubuntu 20.04.
 This package has only been tested for the one recommended above. 
 
 ## File system
@@ -59,7 +58,7 @@ sudo apt install -y python-dev
 sudo apt install -y python-pip
 ```
 
-Install ROS Melodic Morenia
+Install ROS
 
 ```bash
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
@@ -83,16 +82,17 @@ Install build essentials
 ```bash
 sudo apt update -y
 sudo apt install -y build-essential
-sudo apt install -y python-dev
-sudo apt install -y python-pip
+sudo apt install -y python3-dev
+sudo apt install -y python3-pip
 ```
 
-Install ROS Noetic Ninjemys
+Install ROS
+
 ```bash
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
 sudo apt install -y curl
 curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
-sudo apt update 
+sudo apt update
 sudo apt install -y ros-noetic-desktop-full
 echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 source ~/.bashrc
@@ -105,7 +105,7 @@ source ~/.bashrc
 ```
 
 
-#### catkin_ws setup
+#### Setup catkin_ws
 ```bash
 mkdir -p ~/catkin_ws/src
 cd ~/catkin_ws
@@ -116,11 +116,6 @@ catkin init
 ```bash
 cd ./src
 git clone https://github.com/TokyoRobotics/toroboeye_ros
-```
-
-#### Install necessary Package for toroboeye_ros
-```bash
-sudo pip install -U PyYAML
 ```
 
 ### Build toroboeye
@@ -153,7 +148,7 @@ Launch toroboeye_bringup.launch, captured image and pointcloud publish node is s
 you can cofirm captured image(color and depth) and pointcloud in rviz.
 
 ```bash
-roslaunch toroboeye_bringup toroboeye_bringup.launch camera:=true rviz:=true gui:=true
+roslaunch toroboeye_bringup toroboeye_bringup.launch camera:=true rviz:=true gui:=true model:=sl80
 ```
 
 <p align="center">
